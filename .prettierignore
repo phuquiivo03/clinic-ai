@@ -1,0 +1,17 @@
+# Ignore artifacts
+node_modules
+bun.lockb
+dist
+build
+coverage
+
+# Ignore environment files
+.env
+.env.*
+!.env.example
+
+# Ignore other configuration files if necessary
+# e.g., package-lock.json (if using npm)
+
+# Ignore specific files
+# e.g., src/generated/
