@@ -5,6 +5,7 @@ export interface ChatMessage {
   userId: string;
   role: 'user' | 'model' | 'system'; // 'system' could be for initial prompt or context
   content: string; // For text messages
+  image?: string;
   // If supporting function calls and their results directly in history:
   // functionCall?: { name: string; args: any };
   // functionResponse?: { name: string; response: any };

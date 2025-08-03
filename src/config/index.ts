@@ -1,5 +1,8 @@
-import type { AppConfig } from "./type";
+import type { AppConfig } from './type';
 
 export const config: AppConfig = {
-    modelName: "gemini-2.5-flash-preview-04-17",
-}
+  modelName: 'gemini-2.5-flash-preview-04-17',
+  base64: {
+    mimeType: 'image/jpeg',
+  },
+};

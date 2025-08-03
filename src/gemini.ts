@@ -25,9 +25,14 @@ import { getRedisClient } from './config/redis'; // Added Redis client
 import { type ChatMessage } from './interfaces/chat';
 import { config } from './config';
 import type { get } from 'mongoose';
-
+import type { FewShotItem, GeminiHistory } from './types/chat';
+import path from 'path';
+import fs from 'fs';
 dotenv.config();
+const FEWSHOT_PATH = path.join(__dirname, 'fewshot.json');
 
+let fewShotData: FewShotItem[] = [];
+loadFewShotData(); // Load few-shot data at startup
 const API_KEY = process.env.GENAI_API_KEY;
 if (!API_KEY) {
   throw new Error('GEMINI_API_KEY is not set in the environment variables');
@@ -130,7 +135,7 @@ const model = genAI.getGenerativeModel({
       functionDeclarations: [
         getPackageInfo,
         scheduleConsultationTool,
-        getUserExaminationResultsTool
+        getUserExaminationResultsTool,
       ],
     },
   ],
@@ -172,8 +177,8 @@ async function loadChatHistory(userId: string): Promise<Content[]> {
       .toArray();
 
     return messages
-      .filter(msg => msg.role === 'user' || msg.role === 'model') // Only user and model roles for history
-      .map(msg => ({
+      .filter((msg) => msg.role === 'user' || msg.role === 'model') // Only user and model roles for history
+      .map((msg) => ({
         role: msg.role as 'user' | 'model', // Type assertion
         parts: [{ text: msg.content }],
       }));
@@ -197,25 +202,42 @@ export async function saveChatMessage(message: ChatMessage): Promise<void> {
 export async function runChat(
   authenToken: string,
   userId: string,
-  userMessage: string
+  userMessage: string,
+  image?: string
 ): Promise<string> {
   await saveChatMessage({
     userId,
     role: 'user',
     content: userMessage,
+    image,
     timestamp: new Date(),
   });
 
-  const history = await loadChatHistory(userId);
+  const userChatHistory = await loadChatHistory(userId);
+  const fewshotHistory = getFewShotExamples({ maxExamples: 5 });
+  const history = [...fewshotHistory, ...userChatHistory];
   // console.log(`Loaded history for user ${userId}:`, JSON.stringify(history, null, 2));
-
 
   const chat = model.startChat({
     history: history,
     // systemInstruction: defaultSystemPrompt, // System prompt is now part of model config
   });
   console.log(`Starting chat for user ${userId} with message:`, userMessage);
-  const result = await chat.sendMessage(userMessage);
+
+  // send the user message and image (if provided) to the chat
+  const result = image
+    ? await chat.sendMessage([
+        {
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: image,
+          },
+        },
+        {
+          text: 'The patient has itchy red spots on their neck. Based on the image, what condition is likely?',
+        },
+      ])
+    : await chat.sendMessage(userMessage);
   let responseText = '';
   const candidate = result.response.candidates?.[0];
 
@@ -230,7 +252,7 @@ export async function runChat(
           // @ts-ignore
           const fn = availableFunctions[name];
           if (fn) {
-            const rawFunctionResponse = await fn(authenToken,args);
+            const rawFunctionResponse = await fn(authenToken, args);
 
             let structuredResponsePayload;
             if (name === 'getPackages') {
@@ -289,4 +311,45 @@ export async function runChat(
     });
   }
   return responseText;
+}
+
+// ✅ Load dữ liệu khi start server (cache vào RAM)
+export function loadFewShotData() {
+  if (!fs.existsSync(FEWSHOT_PATH)) {
+    throw new Error('Fewshot data file not found.');
+  }
+  const raw = fs.readFileSync(FEWSHOT_PATH, 'utf-8');
+  fewShotData = JSON.parse(raw);
+}
+
+// ✅ Hàm chọn ngẫu nhiên N ảnh theo label (hoặc tất cả nếu không lọc)
+export function getFewShotExamples(options: {
+  maxExamples?: number;
+  labels?: string[];
+}): Content[] {
+  const { maxExamples = 5, labels } = options;
+
+  let pool = fewShotData;
+  if (labels && labels.length > 0) {
+    pool = fewShotData.filter((item) => labels.includes(item.label));
+  }
+
+  const shuffled = [...pool]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, maxExamples);
+
+  return shuffled.map((item) => ({
+    role: 'user',
+    parts: [
+      {
+        inlineData: {
+          mimeType: item.mimeType,
+          data: item.data,
+        },
+      },
+      {
+        text: `This is an example of ${item.label}.`,
+      },
+    ],
+  }));
 }

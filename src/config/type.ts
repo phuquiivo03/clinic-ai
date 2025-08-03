@@ -1,4 +1,4 @@
 export interface AppConfig {
-    modelName: string;
-    
+  modelName: string;
+  base64: { mimeType: string };
 }
