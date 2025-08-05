@@ -30,6 +30,7 @@ import path from 'path';
 import fs from 'fs';
 dotenv.config();
 const FEWSHOT_PATH = path.join(__dirname, 'fewshot.json');
+console.log(`Using fewshot data from: ${FEWSHOT_PATH}`);
 
 let fewShotData: FewShotItem[] = [];
 loadFewShotData(); // Load few-shot data at startup
