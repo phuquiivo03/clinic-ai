@@ -24,7 +24,6 @@ import { getDb } from './config/db';
 import { getRedisClient } from './config/redis'; // Added Redis client
 import { type ChatMessage } from './interfaces/chat';
 import { config } from './config';
-import type { get } from 'mongoose';
 import type { FewShotItem, GeminiHistory } from './types/chat';
 import path from 'path';
 import fs from 'fs';
