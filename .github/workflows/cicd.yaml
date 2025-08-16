@@ -1,0 +1,70 @@
+name: CI/CD Dev
+
+on:
+  push:
+    branches:
+      - main
+  # workflow_dispatch:
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: phuquivo03/ai-svc:latest
+          labels: phuquivo03/ai-svc:latest
+
+  ec2_deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: push_to_registry
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SSH_HOST: ${{ vars.EC2_HOST }}
+          SSH_USER: ${{ vars.EC2_USER }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private.key
+          chmod 700 ~/.ssh/private.key
+
+      - name: Deploy to EC2
+        env:
+          SSH_HOST: ${{ vars.EC2_HOST }}
+          SSH_USER: ${{ vars.EC2_USER }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          DB_NAME: ${{ vars.DB_NAME }}
+          COLLECTION_NAME: ${{ vars.COLLECTION_NAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/private.key ${SSH_USER}@${SSH_HOST} "
+            sudo docker rm -f ai-svc || true
+            sudo docker rmi phuquivo03/ai-svc:latest || true
+            sudo docker run -d -p 80:3000 \
+            --name ai-svc \
+            --expose 3000 \
+            -e OPENAI_API_KEY="${OPENAI_API_KEY}" \
+            -e GENAI_API_KEY="${GENAI_API_KEY}" \
+            -e MONGODB_URI="${MONGODB_URI}" \
+            -e DB_NAME="${DB_NAME}" \
+            -e COLLECTION_NAME="${COLLECTION_NAME}" \
+            -e JWT_SECRET="${JWT_SECRET}" \
+            phuquivo03/ai-svc:latest
+          "
