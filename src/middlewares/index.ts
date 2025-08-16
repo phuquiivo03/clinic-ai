@@ -17,9 +17,11 @@ const userAuthen: RequestHandler = (req, res, next) => {
     return;
   }
   try {
+    console.log(process.env.JWT_SECRET || 'default_secret')
     const decoded = jwt.verify(
       authHeader,
       process.env.JWT_SECRET || 'default_secret'
+
     ) as IAuthenJWT;
     // if (decoded.expired < Date.now()) {
     //   res.status(400).send({ error: 'Token has expired' });

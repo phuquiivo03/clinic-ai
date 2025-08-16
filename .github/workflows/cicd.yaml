@@ -50,6 +50,7 @@ jobs:
           GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           DB_NAME: ${{ vars.DB_NAME }}
+          API_URL: ${{ vars.API_URL }}
           COLLECTION_NAME: ${{ vars.COLLECTION_NAME }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 

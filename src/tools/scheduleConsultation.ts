@@ -84,7 +84,7 @@ export async function scheduleConsultation(
   );
 
   try {
-    const response = await fetch('http://localhost:8081/api/v1/schedule', {
+    const response = await fetch(`${process.env.API_URL}/api/v1/schedule`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

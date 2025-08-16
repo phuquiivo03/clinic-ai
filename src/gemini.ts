@@ -75,7 +75,7 @@ const availableFunctions = {
     console.log('Fetching getPackages from API');
     try {
       const response = await fetch(
-        'https://devq-be0x7.site/api/v1/consultation-package'
+        `${process.env.API_URL}/api/v1/consultation-package`
       );
       if (!response.ok) {
         console.error(
@@ -214,15 +214,12 @@ export async function runChat(
 
   const userChatHistory = await loadChatHistory(userId);
   const fewshotHistory = getFewShotExamples({ maxExamples: 5 });
-  const history = [...fewshotHistory, ...userChatHistory];
-  // console.log(`Loaded history for user ${userId}:`, JSON.stringify(history, null, 2));
+  const history = image ? [...fewshotHistory, ...userChatHistory] : userChatHistory;
 
   const chat = model.startChat({
     history: history,
-    // systemInstruction: defaultSystemPrompt, // System prompt is now part of model config
   });
-  console.log(`Starting chat for user ${userId} with message:`, userMessage);
-
+  console.log(`Starting chat for user ${userId} with message:`, userMessage, image);
   // send the user message and image (if provided) to the chat
   const result = image
     ? await chat.sendMessage([
@@ -233,7 +230,7 @@ export async function runChat(
           },
         },
         {
-          text: 'The patient has itchy red spots on their neck. Based on the image, what condition is likely?',
+          text: 'Based on the image, what condition is likely?',
         },
       ])
     : await chat.sendMessage(userMessage);
