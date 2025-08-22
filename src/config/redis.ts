@@ -7,14 +7,22 @@ let redisClient: RedisClientType | null = null;
 let isRedisConnected = false;
 
 async function initializeRedisClient(): Promise<RedisClientType | null> {
+  const redisConfig = {
+    username: process.env.REDIS_USERNAME || 'default',
+    password: process.env.REDIS_PASSWORD || '0kFUwq9yOMEuyuBzxwCihPecSrJSZPAC',
+    host:
+      process.env.REDIS_URL ||
+      'redis-16367.c334.asia-southeast2-1.gce.redns.redis-cloud.com',
+    port: parseInt(process.env.REDIS_PORT || '16367'),
+  };
   if (!redisClient) {
     console.log('Attempting to connect to Redis...');
     redisClient = createClient({
-      username: 'default',
-      password: '0kFUwq9yOMEuyuBzxwCihPecSrJSZPAC',
+      username: redisConfig.username,
+      password: redisConfig.password,
       socket: {
-        host: 'redis-16367.c334.asia-southeast2-1.gce.redns.redis-cloud.com',
-        port: 16367,
+        host: redisConfig.host,
+        port: redisConfig.port,
       },
     });
 
