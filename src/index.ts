@@ -6,9 +6,7 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
-
 // Cấu hình multer để lưu file tạm
-
 app.use(express.json());
 
 setupRoutes(app);

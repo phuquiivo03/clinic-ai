@@ -53,6 +53,10 @@ jobs:
           API_URL: ${{ vars.API_URL }}
           COLLECTION_NAME: ${{ vars.COLLECTION_NAME }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          REDIS_USERNAME: ${{ secrets.REDIS_USERNAME }}
 
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/private.key ${SSH_USER}@${SSH_HOST} "
@@ -67,5 +71,9 @@ jobs:
             -e DB_NAME="${DB_NAME}" \
             -e COLLECTION_NAME="${COLLECTION_NAME}" \
             -e JWT_SECRET="${JWT_SECRET}" \
+            -e REDIS_USERNAME="${REDIS_USERNAME}" \
+            -e REDIS_PASSWORD="${REDIS_PASSWORD}" \
+            -e REDIS_PORT="${REDIS_PORT}" \
+            -e REDIS_URL="${REDIS_URL}" \
             phuquivo03/ai-svc:latest
           "
