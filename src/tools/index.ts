@@ -34,3 +34,9 @@ export { findWeatherForecast, getProductDetails };
 export * from './getPakcages'; // Exporting getPackageInfo for use in other files
 export * from './medicalExamination'; // Exporting getUserExaminationResults for use in other files
 export { scheduleConsultationTool } from './scheduleConsultation';
+export {
+  similaritySearchTool,
+  batchSimilaritySearchTool,
+  executeSimilaritySearch,
+  executeBatchSimilaritySearch,
+} from './similaritySearch';

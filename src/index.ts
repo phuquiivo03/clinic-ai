@@ -1,7 +1,6 @@
 import express, { type Express, type Request, type Response } from 'express';
 import { setupRoutes } from './routes';
 import dotenv from 'dotenv';
-import multer from 'multer';
 dotenv.config();
 
 const app: Express = express();

@@ -18,6 +18,10 @@ import {
   scheduleConsultationTool,
   getUserExaminationResults,
   getUserExaminationResultsTool, // Added new tool declaration
+  similaritySearchTool,
+  batchSimilaritySearchTool,
+  executeSimilaritySearch,
+  executeBatchSimilaritySearch,
 } from './tools/index';
 import { scheduleConsultation } from './tools/scheduleConsultation'; // Added new tool implementation
 import { getDb } from './config/db';
@@ -27,6 +31,7 @@ import { config } from './config';
 import type { FewShotItem, GeminiHistory } from './types/chat';
 import path from 'path';
 import fs from 'fs';
+import packagesJson from '../samplePackages.json';
 dotenv.config();
 const FEWSHOT_PATH = path.join(__dirname, 'fewshot.json');
 
@@ -43,89 +48,96 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 const availableFunctions = {
   getUserExaminationResults: getUserExaminationResults, // Added new function
 
-  getPackages: async () => {
-    const cacheKey = 'consultation-packages';
-    const cacheExpirySeconds = 3600; // 1 hour
+  // getPackages: async () => {
+  //   const cacheKey = 'consultation-packages';
+  //   const cacheExpirySeconds = 3600; // 1 hour
 
-    let redisClient;
-    try {
-      redisClient = await getRedisClient();
-    } catch (redisError) {
-      console.warn(
-        'Redis client acquisition failed, proceeding without cache for getPackages:',
-        redisError
-      );
-      redisClient = null;
-    }
+  //   let redisClient;
+  //   try {
+  //     redisClient = await getRedisClient();
+  //   } catch (redisError) {
+  //     console.warn(
+  //       'Redis client acquisition failed, proceeding without cache for getPackages:',
+  //       redisError
+  //     );
+  //     redisClient = null;
+  //   }
 
-    if (redisClient) {
-      try {
-        const cachedData = await redisClient.get(cacheKey);
-        if (cachedData) {
-          console.log('Serving getPackages from Redis cache');
-          return JSON.parse(cachedData);
-        }
-      } catch (cacheError) {
-        console.error('Redis GET error for getPackages:', cacheError);
-        // Proceed to fetch from API if cache read fails
-      }
-    }
+  //   if (redisClient) {
+  //     try {
+  //       const cachedData = await redisClient.get(cacheKey);
+  //       if (cachedData) {
+  //         console.log('Serving getPackages from Redis cache');
+  //         return JSON.parse(cachedData);
+  //       }
+  //     } catch (cacheError) {
+  //       console.error('Redis GET error for getPackages:', cacheError);
+  //       // Proceed to fetch from API if cache read fails
+  //     }
+  //   }
 
-    // Cache miss or Redis unavailable, fetch from API
-    console.log('Fetching getPackages from API');
-    try {
-      const response = await fetch(
-        `${process.env.API_URL}/api/v1/consultation-package`
-      );
-      if (!response.ok) {
-        console.error(
-          `API call failed for getPackages with status: ${response.status}`
-        );
-        return {
-          error: `Failed to fetch packages, status: ${response.status}`,
-        };
-      }
-      const data = await response.json();
+  //   // Cache miss or Redis unavailable, fetch from API
+  //   console.log('Fetching getPackages from API');
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.API_URL}/api/v1/consultation-package`
+  //     );
+  //     if (!response.ok) {
+  //       console.error(
+  //         `API call failed for getPackages with status: ${response.status}`
+  //       );
+  //       return {
+  //         error: `Failed to fetch packages, status: ${response.status}`,
+  //       };
+  //     }
+  //     const data = await response.json();
+  //     console.log('data', data);
+  //     const typedData = data as any;
+  //     let packagesData;
 
-      const typedData = data as any;
-      let packagesData;
+  //     if (
+  //       typedData &&
+  //       typedData.data?.data &&
+  //       Array.isArray(typedData.data.data)
+  //     ) {
+  //       packagesData = typedData.data;
+  //     } else if (Array.isArray(typedData)) {
+  //       packagesData = typedData;
+  //     } else {
+  //       console.error(
+  //         'Unexpected API response structure for packages:',
+  //         typedData
+  //       );
+  //       return { error: 'Unexpected API response structure for packages.' };
+  //     }
 
-      if (typedData && typedData.data && Array.isArray(typedData.data)) {
-        packagesData = typedData.data;
-      } else if (Array.isArray(typedData)) {
-        packagesData = typedData;
-      } else {
-        console.error(
-          'Unexpected API response structure for packages:',
-          typedData
-        );
-        return { error: 'Unexpected API response structure for packages.' };
-      }
-
-      // Store in Redis if client available and data is valid
-      if (redisClient && packagesData && !packagesData.error) {
-        try {
-          await redisClient.setEx(
-            cacheKey,
-            cacheExpirySeconds,
-            JSON.stringify(packagesData)
-          );
-          console.log('Stored getPackages response in Redis cache');
-        } catch (cacheSetError) {
-          console.error('Redis SETEX error for getPackages:', cacheSetError);
-        }
-      }
-      return packagesData;
-    } catch (fetchError) {
-      console.error('Error fetching packages from API:', fetchError);
-      return {
-        error: 'Failed to fetch packages due to a network or parsing error.',
-      };
-    }
-  },
+  //     // Store in Redis if client available and data is valid
+  //     if (redisClient && packagesData && !packagesData.error) {
+  //       try {
+  //         await redisClient.setEx(
+  //           cacheKey,
+  //           cacheExpirySeconds,
+  //           JSON.stringify(packagesData)
+  //         );
+  //         console.log('Stored getPackages response in Redis cache');
+  //       } catch (cacheSetError) {
+  //         console.error('Redis SETEX error for getPackages:', cacheSetError);
+  //       }
+  //     }
+  //     return packagesData;
+  //   } catch (fetchError) {
+  //     console.error('Error fetching packages from API:', fetchError);
+  //     return {
+  //       error: 'Failed to fetch packages due to a network or parsing error.',
+  //     };
+  //   }
+  // },
   scheduleConsultation: scheduleConsultation,
+  similaritySearch: executeSimilaritySearch,
+  batchSimilaritySearch: executeBatchSimilaritySearch,
 };
 
+const basePackages = JSON.stringify(packagesJson);
 const model = genAI.getGenerativeModel({
   model: config.modelName,
   systemInstruction: defaultSystemPrompt,
@@ -135,6 +147,8 @@ const model = genAI.getGenerativeModel({
         getPackageInfo,
         scheduleConsultationTool,
         getUserExaminationResultsTool,
+        similaritySearchTool,
+        batchSimilaritySearchTool,
       ],
     },
   ],
@@ -204,6 +218,15 @@ export async function runChat(
   userMessage: string,
   image?: string
 ): Promise<string> {
+  // Validate input parameters
+  if (!userMessage || userMessage.trim().length === 0) {
+    throw new Error('User message cannot be empty');
+  }
+
+  if (!userId || userId.trim().length === 0) {
+    throw new Error('User ID cannot be empty');
+  }
+
   await saveChatMessage({
     userId,
     role: 'user',
@@ -214,12 +237,25 @@ export async function runChat(
 
   const userChatHistory = await loadChatHistory(userId);
   const fewshotHistory = getFewShotExamples({ maxExamples: 5 });
-  const history = image ? [...fewshotHistory, ...userChatHistory] : userChatHistory;
+  const history = image
+    ? [...fewshotHistory, ...userChatHistory]
+    : userChatHistory;
 
   const chat = model.startChat({
     history: history,
   });
-  console.log(`Starting chat for user ${userId} with message:`, userMessage, image);
+  console.log(
+    `Starting chat for user ${userId} with message:`,
+    userMessage,
+    image
+  );
+
+  // Ensure message is properly trimmed and not empty
+  const trimmedMessage = userMessage.trim();
+  if (!trimmedMessage) {
+    throw new Error('Message content is empty after trimming');
+  }
+
   // send the user message and image (if provided) to the chat
   const result = image
     ? await chat.sendMessage([
@@ -233,7 +269,7 @@ export async function runChat(
           text: 'Based on the image, what condition is likely?',
         },
       ])
-    : await chat.sendMessage(userMessage);
+    : await chat.sendMessage(trimmedMessage);
   let responseText = '';
   const candidate = result.response.candidates?.[0];
 
@@ -248,13 +284,20 @@ export async function runChat(
           // @ts-ignore
           const fn = availableFunctions[name];
           if (fn) {
+            console.log('found function', fn);
             const rawFunctionResponse = await fn(authenToken, args);
 
-            let structuredResponsePayload;
-            if (name === 'getPackages') {
-              structuredResponsePayload = { packages: rawFunctionResponse };
-            } else {
-              structuredResponsePayload = rawFunctionResponse; // Assumes other functions return objects
+            let structuredResponsePayload = rawFunctionResponse; // Assumes other functions return objects
+
+            // Validate function response before sending
+            if (
+              !structuredResponsePayload ||
+              (typeof structuredResponsePayload === 'object' &&
+                Object.keys(structuredResponsePayload).length === 0)
+            ) {
+              structuredResponsePayload = {
+                error: 'Function returned empty or invalid response',
+              };
             }
 
             const result2 = await chat.sendMessage([
