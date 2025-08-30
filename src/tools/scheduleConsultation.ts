@@ -11,7 +11,7 @@ function getWeekPeriod(date: Date): { from: string; to: string } {
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
   sunday.setHours(23, 59, 59, 999); // End of Sunday
-  
+
   return {
     from: monday.toISOString(),
     to: sunday.toISOString(),
@@ -36,8 +36,7 @@ export const scheduleConsultationTool: FunctionDeclaration = {
       },
       timeOffset: {
         type: SchemaType.INTEGER,
-        description:
-          'The offset for the time slot: 0 for 8 AM, 1 for 9 AM, 2 for 10 AM, 3 for 11 AM, 4 for 1 PM, 5 for 2 PM, 6 for 3 PM, 7 for 4 PM.',
+        description: 'The offset for the time slot: 0 for  AM, 1 for  PM.',
       },
       targetDate: {
         type: SchemaType.STRING,
@@ -71,6 +70,7 @@ export async function scheduleConsultation(
   const status = 'pending'; // Static as per requirement
 
   const payload = {
+    type: 'package',
     weekPeriod,
     dayOffset,
     timeOffset,
@@ -82,37 +82,42 @@ export async function scheduleConsultation(
     'Scheduling consultation with payload:',
     JSON.stringify(payload, null, 2)
   );
+  return {
+    method: 'POST',
+    url: `${process.env.API_URL}/api/v1/schedule`,
+    data: payload,
+  };
 
-  try {
-    const response = await fetch(`${process.env.API_URL}/api/v1/schedule`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: authenToken, // As per cURL example, empty. Clarify if a real token is needed.
-      },
-      body: JSON.stringify(payload),
-    });
+  // try {
+  //   const response = await fetch(`${process.env.API_URL}/api/v1/schedule`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: authenToken, // As per cURL example, empty. Clarify if a real token is needed.
+  //     },
+  //     body: JSON.stringify(payload),
+  //   });
 
-    const responseData = await response.json();
+  //   const responseData = await response.json();
 
-    if (!response.ok) {
-      console.error(
-        `Schedule API call failed with status: ${response.status}`,
-        responseData
-      );
-      return {
-        error: `Failed to schedule consultation, status: ${response.status}`,
-        details: responseData,
-      };
-    }
-    console.log('Consultation scheduled successfully:', responseData);
-    return { success: true, data: responseData };
-  } catch (error) {
-    console.error('Error scheduling consultation:', error);
-    return {
-      error:
-        'Failed to schedule consultation due to a network or parsing error.',
-      details: error instanceof Error ? error.message : String(error),
-    };
-  }
+  //   if (!response.ok) {
+  //     console.error(
+  //       `Schedule API call failed with status: ${response.status}`,
+  //       responseData
+  //     );
+  //     return {
+  //       error: `Failed to schedule consultation, status: ${response.status}`,
+  //       details: responseData,
+  //     };
+  //   }
+  //   console.log('Consultation scheduled successfully:', responseData);
+  // return { success: true, data: responseData };
+  // } catch (error) {
+  //   console.error('Error scheduling consultation:', error);
+  //   return {
+  //     error:
+  //       'Failed to schedule consultation due to a network or parsing error.',
+  //     details: error instanceof Error ? error.message : String(error),
+  //   };
+  // }
 }
