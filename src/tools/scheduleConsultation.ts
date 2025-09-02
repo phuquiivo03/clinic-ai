@@ -32,7 +32,7 @@ export const scheduleConsultationTool: FunctionDeclaration = {
       dayOffset: {
         type: SchemaType.INTEGER,
         description:
-          'The offset for the day of the week: 0 for Monday, 1 for Tuesday, 2 for Wednesday, 3 for Thursday, 4 for Friday.',
+          'The offset for the day of the week: 0 for Monday, 1 for Tuesday, 2 for Wednesday, 3 for Thursday, 4 for Friday, 5 for Saturday.',
       },
       timeOffset: {
         type: SchemaType.INTEGER,
