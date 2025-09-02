@@ -21,7 +21,7 @@ function getWeekPeriod(date: Date): { from: string; to: string } {
 export const scheduleConsultationTool: FunctionDeclaration = {
   name: 'scheduleConsultation',
   description:
-    'Schedules a consultation package for a user. Requires package ID, preferred day of the week (Monday-Friday), and preferred time slot.',
+    'Create json data to chedules a consultation package for a user. Requires package ID, preferred day of the week (Monday-Friday), and preferred time slot.',
   parameters: {
     type: SchemaType.OBJECT,
     properties: {
