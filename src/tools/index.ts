@@ -33,6 +33,7 @@ const getProductDetails: FunctionDeclaration = {
 export { findWeatherForecast, getProductDetails };
 export * from './getPakcages'; // Exporting getPackageInfo for use in other files
 export * from './medicalExamination'; // Exporting getUserExaminationResults for use in other files
+export * from './getBlogs'; // Exporting getBlogsTool and getBlogs for use in other files
 export { scheduleConsultationTool } from './scheduleConsultation';
 export {
   similaritySearchTool,

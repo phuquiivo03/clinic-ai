@@ -17,25 +17,18 @@ const userAuthen: RequestHandler = (req, res, next) => {
     return;
   }
   try {
-    console.log(process.env.JWT_SECRET || 'default_secret')
+    console.log(process.env.JWT_SECRET || 'default_secret');
     const decoded = jwt.verify(
       authHeader,
       process.env.JWT_SECRET || 'default_secret'
-
     ) as IAuthenJWT;
-    // if (decoded.expired < Date.now()) {
-    //   res.status(400).send({ error: 'Token has expired' });
-    //   return;
-    // }
     req.authenToken = authHeader;
     req.userId = decoded.id;
     next();
   } catch (error) {
-    res
-      .status(400)
-      .send({
-        error: `Internal Error:  ${(error as unknown as Error).message}`,
-      });
+    res.status(400).send({
+      error: `Internal Error:  ${(error as unknown as Error).message}`,
+    });
   }
 };
 

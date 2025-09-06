@@ -22,6 +22,7 @@ import {
   batchSimilaritySearchTool,
   executeSimilaritySearch,
   executeBatchSimilaritySearch,
+  getBlogs,
 } from './tools/index';
 import { scheduleConsultation } from './tools/scheduleConsultation'; // Added new tool implementation
 import { getDb } from './config/db';
@@ -135,6 +136,7 @@ const availableFunctions = {
   scheduleConsultation: scheduleConsultation,
   similaritySearch: executeSimilaritySearch,
   batchSimilaritySearch: executeBatchSimilaritySearch,
+  getBlogs: getBlogs,
 };
 
 const basePackages = JSON.stringify(packagesJson);
