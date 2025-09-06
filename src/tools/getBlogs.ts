@@ -18,10 +18,23 @@ export const getBlogsTool: FunctionDeclaration = {
   },
 };
 
-export async function getBlogs(searchValue: string): Promise<any> {
+export async function getBlogs(
+  authenToken: string,
+  args: { keyword: string }
+): Promise<any> {
   try {
+    console.log(args);
+    console.log(
+      `${process.env.API_URL}/api/v1/blog?search=${encodeURIComponent(args.keyword)}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     const response = await fetch(
-      `${process.env.API_URL}/api/v1/blog?search=${encodeURIComponent(searchValue)}`,
+      `${process.env.API_URL}/api/v1/blog/search?q=${encodeURIComponent(args.keyword)}`,
       {
         method: 'GET',
         headers: {

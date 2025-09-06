@@ -35,9 +35,9 @@ export * from './getPakcages'; // Exporting getPackageInfo for use in other file
 export * from './medicalExamination'; // Exporting getUserExaminationResults for use in other files
 export * from './getBlogs'; // Exporting getBlogsTool and getBlogs for use in other files
 export { scheduleConsultationTool } from './scheduleConsultation';
-export {
-  similaritySearchTool,
-  batchSimilaritySearchTool,
-  executeSimilaritySearch,
-  executeBatchSimilaritySearch,
-} from './similaritySearch';
+// export {
+//   similaritySearchTool,
+//   batchSimilaritySearchTool,
+//   executeSimilaritySearch,
+//   executeBatchSimilaritySearch,
+// } from './similaritySearch';

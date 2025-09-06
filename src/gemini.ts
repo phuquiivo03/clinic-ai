@@ -18,10 +18,10 @@ import {
   scheduleConsultationTool,
   getUserExaminationResults,
   getUserExaminationResultsTool, // Added new tool declaration
-  similaritySearchTool,
-  batchSimilaritySearchTool,
-  executeSimilaritySearch,
-  executeBatchSimilaritySearch,
+  // similaritySearchTool,
+  // batchSimilaritySearchTool,
+  // executeSimilaritySearch,
+  // executeBatchSimilaritySearch,
   getBlogs,
 } from './tools/index';
 import { scheduleConsultation } from './tools/scheduleConsultation'; // Added new tool implementation
@@ -48,94 +48,7 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 // Define a sample function that the model can call
 const availableFunctions = {
   getUserExaminationResults: getUserExaminationResults, // Added new function
-
-  // getPackages: async () => {
-  //   const cacheKey = 'consultation-packages';
-  //   const cacheExpirySeconds = 3600; // 1 hour
-
-  //   let redisClient;
-  //   try {
-  //     redisClient = await getRedisClient();
-  //   } catch (redisError) {
-  //     console.warn(
-  //       'Redis client acquisition failed, proceeding without cache for getPackages:',
-  //       redisError
-  //     );
-  //     redisClient = null;
-  //   }
-
-  //   if (redisClient) {
-  //     try {
-  //       const cachedData = await redisClient.get(cacheKey);
-  //       if (cachedData) {
-  //         console.log('Serving getPackages from Redis cache');
-  //         return JSON.parse(cachedData);
-  //       }
-  //     } catch (cacheError) {
-  //       console.error('Redis GET error for getPackages:', cacheError);
-  //       // Proceed to fetch from API if cache read fails
-  //     }
-  //   }
-
-  //   // Cache miss or Redis unavailable, fetch from API
-  //   console.log('Fetching getPackages from API');
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.API_URL}/api/v1/consultation-package`
-  //     );
-  //     if (!response.ok) {
-  //       console.error(
-  //         `API call failed for getPackages with status: ${response.status}`
-  //       );
-  //       return {
-  //         error: `Failed to fetch packages, status: ${response.status}`,
-  //       };
-  //     }
-  //     const data = await response.json();
-  //     console.log('data', data);
-  //     const typedData = data as any;
-  //     let packagesData;
-
-  //     if (
-  //       typedData &&
-  //       typedData.data?.data &&
-  //       Array.isArray(typedData.data.data)
-  //     ) {
-  //       packagesData = typedData.data;
-  //     } else if (Array.isArray(typedData)) {
-  //       packagesData = typedData;
-  //     } else {
-  //       console.error(
-  //         'Unexpected API response structure for packages:',
-  //         typedData
-  //       );
-  //       return { error: 'Unexpected API response structure for packages.' };
-  //     }
-
-  //     // Store in Redis if client available and data is valid
-  //     if (redisClient && packagesData && !packagesData.error) {
-  //       try {
-  //         await redisClient.setEx(
-  //           cacheKey,
-  //           cacheExpirySeconds,
-  //           JSON.stringify(packagesData)
-  //         );
-  //         console.log('Stored getPackages response in Redis cache');
-  //       } catch (cacheSetError) {
-  //         console.error('Redis SETEX error for getPackages:', cacheSetError);
-  //       }
-  //     }
-  //     return packagesData;
-  //   } catch (fetchError) {
-  //     console.error('Error fetching packages from API:', fetchError);
-  //     return {
-  //       error: 'Failed to fetch packages due to a network or parsing error.',
-  //     };
-  //   }
-  // },
   scheduleConsultation: scheduleConsultation,
-  similaritySearch: executeSimilaritySearch,
-  batchSimilaritySearch: executeBatchSimilaritySearch,
   getBlogs: getBlogs,
 };
 
@@ -149,8 +62,8 @@ const model = genAI.getGenerativeModel({
         getPackageInfo,
         scheduleConsultationTool,
         getUserExaminationResultsTool,
-        similaritySearchTool,
-        batchSimilaritySearchTool,
+        // similaritySearchTool,
+        // batchSimilaritySearchTool,
       ],
     },
   ],
@@ -248,8 +161,7 @@ export async function runChat(
   });
   console.log(
     `Starting chat for user ${userId} with message:`,
-    userMessage,
-    image
+    userMessage
   );
 
   // Ensure message is properly trimmed and not empty
