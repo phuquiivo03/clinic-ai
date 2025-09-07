@@ -218,7 +218,7 @@ export async function runChat(
               {
                 functionResponse: {
                   name,
-                  response: structuredResponsePayload,
+                  response: { result: structuredResponsePayload },
                 },
               },
             ] as Part[]);
