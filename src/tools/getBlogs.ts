@@ -25,7 +25,7 @@ export async function getBlogs(
   try {
     console.log(args);
     console.log(
-      `${process.env.API_URL}/api/v1/blog?search=${encodeURIComponent(args.keyword)}`,
+      `${process.env.API_URL}/api/v1/blog/search?q=${encodeURIComponent(args.keyword)}`,
       {
         method: 'GET',
         headers: {

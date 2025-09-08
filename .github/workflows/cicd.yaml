@@ -69,6 +69,7 @@ jobs:
             -e GENAI_API_KEY="${GENAI_API_KEY}" \
             -e MONGODB_URI="${MONGODB_URI}" \
             -e DB_NAME="${DB_NAME}" \
+            -e API_URL="${API_URL}" \
             -e COLLECTION_NAME="${COLLECTION_NAME}" \
             -e JWT_SECRET="${JWT_SECRET}" \
             -e REDIS_USERNAME="${REDIS_USERNAME}" \
