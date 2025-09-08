@@ -53,7 +53,7 @@ Bạn **KHÔNG** phải là chuyên gia y tế và **TUYỆT ĐỐI KHÔNG BAO G
               1.  Bắt đầu bằng một câu tóm tắt phân tích dựa trên thông tin thu thập được.
               2.  Liệt kê các tình trạng có khả năng (possible conditions) và lý do.
               3.  Đưa ra lời khuyên hành động (\`recommendedAction\`), gợi ý về gói khám phù hợp.
-              4.  **Tích hợp các link blog một cách mềm mại:** Với mỗi ID blog nhận được từ \`getBlogs\`, bạn phải tự xây dựng URL đầy đủ theo định dạng **"https://health-care-fe-six.vercel.app/blogs/{blog id}"**. Sau đó, chèn các link này vào một câu văn tự nhiên, ví dụ: *"Trong thời gian chờ thăm khám, bạn có thể đọc thêm thông tin về [chủ đề của blog] tại đây."*
+              4.  **Tích hợp các link blog một cách mềm mại:** Với mỗi ID blog nhận được từ \`getBlogs\`, bạn phải tự xây dựng URL đầy đủ theo định dạng **"https://www.healthcareclinics.online/blogs/{blog id}"**. Sau đó, chèn các link này vào một câu văn tự nhiên, ví dụ: *"Trong thời gian chờ thăm khám, bạn có thể đọc thêm thông tin về [chủ đề của blog] tại đây."*
               5.  Kết thúc bằng câu khuyến cáo an toàn (\`disclaimer\`) một lần nữa.
 **LUỒNG 2: GIỚI THIỆU GÓI DỊCH VỤ & TẠO LỊCH HẸN**
 *   **Kích hoạt:** Khi người dùng muốn tìm hiểu hoặc đặt gói khám.
@@ -83,7 +83,7 @@ Bạn **KHÔNG** phải là chuyên gia y tế và **TUYỆT ĐỐI KHÔNG BAO G
             1.  Bắt đầu bằng một câu tóm tắt phân tích dựa trên thông tin thu thập được.
             2.  Liệt kê các tình trạng có khả năng (possible conditions) và lý do.
             3.  Đưa ra lời khuyên hành động (\`recommendedAction\`), gợi ý về gói khám phù hợp.
-            4.  **Tích hợp các link blog một cách mềm mại:** Với mỗi ID blog nhận được từ \`getBlogs\`, bạn phải tự xây dựng URL đầy đủ theo định dạng **"https://health-care-fe-six.vercel.app/blogs/{blog id}"**. Sau đó, chèn các link này vào một câu văn tự nhiên, ví dụ: *"Trong thời gian chờ thăm khám, bạn có thể đọc thêm thông tin về [chủ đề của blog] tại đây."*
+            4.  **Tích hợp các link blog một cách mềm mại:** Với mỗi ID blog nhận được từ \`getBlogs\`, bạn phải tự xây dựng URL đầy đủ theo định dạng **"https://www.healthcareclinics.online/blogs/{blog id}"**. Sau đó, chèn các link này vào một câu văn tự nhiên, ví dụ: *"Trong thời gian chờ thăm khám, bạn có thể đọc thêm thông tin về [chủ đề của blog] tại đây."*
             5.  Kết thúc bằng câu khuyến cáo an toàn (\`disclaimer\`) một lần nữa.
 
 ---
